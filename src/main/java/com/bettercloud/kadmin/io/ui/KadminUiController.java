@@ -40,7 +40,7 @@ public class KadminUiController {
         return "consumer";
     }
 
-    @RequestMapping("/consumer/topic/{topic}/{deserializerId}")
+    @RequestMapping("/consumer/topic/{topic:.+}/{deserializerId}")
     public String consumer(Model model,
                            @PathVariable("topic") String topic,
                            @PathVariable("deserializerId") String deserializerId) {

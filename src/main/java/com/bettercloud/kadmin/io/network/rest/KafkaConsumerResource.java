@@ -53,7 +53,7 @@ public class KafkaConsumerResource {
     }
 
     @RequestMapping(
-            path = "/kafka/read/{topic}",
+            path = "/kafka/read/{topic:.+}",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
