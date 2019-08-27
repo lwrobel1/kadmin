@@ -13,9 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by davidesposito on 7/6/16.
@@ -58,7 +57,9 @@ public class SchemaProxyResource {
     )
     public ResponseEntity<Collection<String>> topics(@RequestParam("kafka-url") Optional<String> kafkaUrl) {
         try {
-            return ResponseEntity.ok(introspectionService.getAllTopicNames(kafkaUrl));
+            final List<String> topics = introspectionService.getAllTopicNames(kafkaUrl).stream().collect(Collectors.toList());
+            Collections.sort(topics);
+            return ResponseEntity.ok(topics);
         } catch (Exception e) {
             return ResponseEntity.status(500)
                     .header("error-message", e.getMessage())
