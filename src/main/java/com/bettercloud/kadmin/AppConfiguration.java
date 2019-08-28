@@ -69,8 +69,8 @@ public class AppConfiguration {
     public DeserializerRegistryService deserializerRegistryService() {
         DeserializerRegistryService registry = new KafkaDeserializerRegistryService();
 
-        registry.register(dim("Avro Object Deserializer", ErrorTolerantAvroObjectDeserializer.class, "avro", (o) -> toNode(o + "")));
         registry.register(dim(StringDeserializer.class, "string", (o) -> new TextNode(o + "")));
+        registry.register(dim("Avro Object Deserializer", ErrorTolerantAvroObjectDeserializer.class, "avro", (o) -> toNode(o + "")));
         registry.register(dim(ByteArrayDeserializer.class, "bytes", (o) -> toNode(w(o + ""))));
         registry.register(dim(IntegerDeserializer.class, "int", (o) -> toNode(o + "")));
         registry.register(dim(LongDeserializer.class, "long", (o) -> toNode(o + "")));
