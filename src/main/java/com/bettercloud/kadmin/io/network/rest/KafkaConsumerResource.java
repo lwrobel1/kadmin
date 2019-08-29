@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +65,8 @@ public class KafkaConsumerResource {
                                                      @RequestParam("kafkaUrl") Optional<String> kafkaUrl,
                                                      @RequestParam("schemaUrl") Optional<String> schemaUrl,
                                                      @RequestParam("size") Optional<Integer> queueSize,
-                                                     @RequestParam("deserializerId") String deserializerId) {
+                                                     @RequestParam("deserializerId") String deserializerId,
+                                                     @RequestParam("messageFilter") Optional<String> messageFilter) {
         DeserializerInfoModel des = deserializerRegistryService.findById(deserializerId);
         if (des == null) {
             return ResponseUtil.error("Invalid deserializer id", HttpStatus.NOT_FOUND);
@@ -94,6 +97,13 @@ public class KafkaConsumerResource {
                         return node;
                     })
                     .map(n -> (JsonNode) n)
+                    .filter(n ->  {
+                        return messageFilter.map( f -> {
+                            final Pattern pattern = Pattern.compile(f);
+                            final Matcher matcher = pattern.matcher(n.get("message").asText());
+                            return matcher.find();
+                        }).orElse(true);
+                    })
                     .collect(Collectors.toList());
             page = new Page<>();
             page.setPage(0);
