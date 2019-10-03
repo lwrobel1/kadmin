@@ -12,6 +12,7 @@ function initMain() {
             kafkaUrl: null,
             schemaUrl: null,
             topic: null,
+            keyFilter: null,
             messageFilter: null,
             since: null,
             refreshHandle: null,
@@ -95,6 +96,7 @@ function initConfig() {
         kafkaUrl: $('#kafkahost').val(),
         schemaUrl: $('#schemaurl').val(),
         topic: $('#topic').val(),
+        keyFilter: $('#keyfilter').val(),
         messageFilter: $('#messagefilter').val(),
         since: -1,
         autoRefresh: null,
@@ -106,6 +108,9 @@ function initConfig() {
     }
     if (consumerConfig.schemaUrl === "") {
         consumerConfig.schemaUrl = null;
+    }
+    if (consumerConfig.KeyFilter === "") {
+        consumerConfig.KeyFilter = null;
     }
     if (consumerConfig.messageFilter === "") {
         consumerConfig.messageFilter = null;
@@ -120,6 +125,7 @@ function disableForm() {
     $("#kafkahost").prop("disabled", true);
     $("#schemaurl").prop("disabled", true);
     $("#topic").prop("disabled", true);
+    $("#keyfilter").prop("disabled", true);
     $("#messagefilter").prop("disabled", true);
     App.consumer.$topicsSelect.prop("disabled", true);
     $("#start-consumer-btn").addClass("disabled");
@@ -130,6 +136,7 @@ function enableForm() {
     $("#kafkahost").prop("disabled", false);
     $("#schemaurl").prop("disabled", false);
     $("#topic").prop("disabled", false);
+    $("#keyfilter").prop("disabled", false);
     $("#messagefilter").prop("disabled", false);
     App.consumer.$topicsSelect.prop("disabled", false);
     $("#start-consumer-btn").removeClass("disabled");
@@ -208,6 +215,9 @@ function buildUrl() {
     }
     if (!!consumerConfig.schemaUrl) {
         url += "schemaUrl=" + consumerConfig.schemaUrl + "&";
+    }
+    if (!!consumerConfig.keyFilter) {
+        url += "keyFilter=" + consumerConfig.keyFilter;
     }
     if (!!consumerConfig.messageFilter) {
         url += "messageFilter=" + consumerConfig.messageFilter;

@@ -13,6 +13,7 @@ import lombok.NonNull;
 public class KadminConsumerConfig {
 
     @NonNull private final String topic;
+    private String keyFilter;
     private String messageFilter;
     private String kafkaHost;
     private String schemaRegistryUrl;
