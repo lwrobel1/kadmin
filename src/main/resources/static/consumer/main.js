@@ -126,6 +126,16 @@ function disableForm() {
     App.consumer.$desSelect.prop("disabled", true);
 }
 
+function enableForm() {
+    $("#kafkahost").prop("disabled", false);
+    $("#schemaurl").prop("disabled", false);
+    $("#topic").prop("disabled", false);
+    $("#messagefilter").prop("disabled", false);
+    App.consumer.$topicsSelect.prop("disabled", false);
+    $("#start-consumer-btn").removeClass("disabled");
+    App.consumer.$desSelect.prop("disabled", false);
+}
+
 function initMessageList() {
     $('#message-list-title').html("Messages - " + consumerConfig.topic);
     var $refresh = $("#refresh-btn");
@@ -167,7 +177,9 @@ function disposeConsumer() {
         type: "DELETE",
         url: App.contextPath + "/api/manager/consumers/" + App.consumer.consumerConfig.id,
         success: function() {
-            window.location.href = App.contextPath;
+            App.consumer.$messageList.html('');
+            App.consumer.consumerConfig.started = false;
+            enableForm();
         }
     });
 }
