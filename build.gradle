@@ -23,8 +23,11 @@ apply plugin: "io.spring.dependency-management"
 
 jar {
 	baseName	= 'shared-kafka-admin-micro'
-	version 	= '0.9.1'
+	version 	= '0.12.0'
 	enabled 	= true
+	manifest {
+		attributes 'Main-Class': 'com.bettercloud.kadmin.Application'
+	}
 }
 
 sourceCompatibility = 1.8
