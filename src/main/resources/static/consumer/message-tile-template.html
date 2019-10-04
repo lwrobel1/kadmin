@@ -18,7 +18,14 @@
         <div class="time-row text-muted">
             topic: <%= topic %>
         </div>
+        <% if (headersText) { %>
+        <div class="headers-row">
+            Headers:
+            <pre><%= headersText %></pre>
+        </div>
+        <% } %>
         <div id="<%= uuid %>" class="collapse in">
+            Payload:
             <pre><%= messageText %></pre>
         </div>
     </div>

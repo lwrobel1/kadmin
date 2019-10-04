@@ -1,7 +1,6 @@
 package com.bettercloud.kadmin.io.network.rest;
 
 import com.bettercloud.kadmin.api.kafka.KadminConsumerConfig;
-import com.bettercloud.kadmin.api.kafka.KadminConsumerGroup;
 import com.bettercloud.kadmin.api.kafka.KadminConsumerGroupContainer;
 import com.bettercloud.kadmin.api.models.DeserializerInfoModel;
 import com.bettercloud.kadmin.api.services.BundledKadminConsumerGroupProviderService;
@@ -12,13 +11,13 @@ import com.bettercloud.kadmin.kafka.QueuedKafkaMessageHandler;
 import com.bettercloud.util.Page;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Joiner;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -89,10 +88,21 @@ public class KafkaConsumerResource {
                     .map(m -> (QueuedKafkaMessageHandler.MessageContainer) m)
                     .map(mc -> {
                         ObjectNode node = mapper.createObjectNode();
+
+                        ArrayNode headersNode = mapper.createArrayNode();
+                        mc.getHeaders().entrySet().forEach(h -> {
+                            ObjectNode headerNode = mapper.createObjectNode();
+                            headerNode.put("key", h.getKey());
+                            headerNode.put("value", new String(h.getValue()));
+                            headersNode.add(headerNode);
+                        });
+
+                        node.set("headers", headersNode);
                         node.put("key", mc.getKey());
                         node.put("writeTime", mc.getWriteTime());
                         node.put("offset", mc.getOffset());
                         node.put("topic", mc.getTopic());
+
                         node.replace("message", des.getPrepareOutputFunc().apply(mc.getMessage()));
                         return node;
                     })

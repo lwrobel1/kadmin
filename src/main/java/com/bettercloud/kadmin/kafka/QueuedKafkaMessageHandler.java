@@ -7,10 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.header.Header;
 import org.slf4j.Logger;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,6 +47,7 @@ public class QueuedKafkaMessageHandler implements MessageHandler {
                 .partition(record.partition())
                 .topic(record.topic())
                 .writeTime(currTime)
+                .headers(Arrays.stream(record.headers().toArray()).collect(Collectors.toMap(Header::key, Header::value)))
                 .build());
     }
 
@@ -87,6 +91,7 @@ public class QueuedKafkaMessageHandler implements MessageHandler {
         private final String topic;
         private final int partition;
         private final long offset;
+        private final Map<String, byte[]> headers;
     }
 
     protected static class FixedSizeList<E> {
