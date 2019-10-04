@@ -242,7 +242,11 @@ function handleResults(res) {
         ele.writeTimeText = moment(ele.writeTime).format('LTS');
         ele.messageText = "null";
         if (!!ele.message) {
-            ele.rawMessage = ele.message;
+            try {
+                ele.rawMessage = JSON.stringify(JSON.parse(ele.message), null, 2);
+            } catch (error) {
+                ele.rawMessage = ele.message;
+            }
             ele.messageText = ele.rawMessage;
         } else {
             ele.rawMessage = "null";
