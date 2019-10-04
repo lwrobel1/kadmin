@@ -248,6 +248,13 @@ function handleResults(res) {
             ele.rawMessage = "null";
             ele.messageText = "null";
         }
+        ele.headersText = _.reduce(
+                                   _.map(
+                                         ele.headers,
+                                         function(h) { return h.key + ": " + h.value}),
+                                   function(r, t) { return r + t + "\n"},
+                                   '')
+                           .trim();
         ele.timestamp = "_" + count++;
         html = App.consumer.messageTemplate(ele);
         App.consumer.$messageList.prepend(html);
