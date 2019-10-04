@@ -19,17 +19,11 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'java'
-apply plugin: 'war'
 apply plugin: "io.spring.dependency-management"
 
 jar {
 	baseName = 'shared-kafka-admin-micro'
 	version = '0.9.1'
-}
-
-war {
-	baseName = 'shared-kafka-admin-micro'
-	version =  '0.9.1'
 }
 
 sourceCompatibility = 1.8
