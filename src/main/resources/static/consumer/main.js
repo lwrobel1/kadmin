@@ -242,7 +242,8 @@ function handleResults(res) {
         ele.writeTimeText = moment(ele.writeTime).format('LTS');
         ele.messageText = "null";
         if (!!ele.message) {
-            ele.messageText = ele.message;
+            ele.rawMessage = ele.message;
+            ele.messageText = ele.rawMessage;
         } else {
             ele.rawMessage = "null";
             ele.messageText = "null";
