@@ -1,8 +1,9 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Kadmin @ BetterCloud</title>
+        <title>Kadmin</title>
         <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+        <link th:href="@{/css/prettify.css}" rel="stylesheet" />
         <link th:href="@{/favicon.ico}" rel="icon" />
         <style>
             body {
@@ -60,8 +61,9 @@
             </div>
             <div id="main-content"></div>
             <div class="footer">
-                Kadmin 0.9.0 - BetterCloud 2016
-                (<a href="mailto:david.esposito@bettercloud.com">david.esposito@bettercloud.com</a>)
+                <small>Kadmin 0.12.0 - </small>
+                <small>Copyright &copy; 2019, <a href="https://www.ambsoft.pl/eng">AMB Software</a> </small>
+                <small>Copyright &copy; 2016, BetterCloud</small>
             </div>
         </div>
 
@@ -89,6 +91,7 @@
         <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
         <script type="text/javascript" th:src="@{/js/moment.min.js}"></script>
         <script type="text/javascript" th:src="@{/js/clipboard.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/prettify.js}"></script>
         <script type="text/javascript" th:src="@{/consumer/main.js}"></script>
         <script type="application/javascript">
             var App = _.extend(App, {

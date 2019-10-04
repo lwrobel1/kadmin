@@ -65,6 +65,7 @@ public class KafkaConsumerResource {
                                                      @RequestParam("schemaUrl") Optional<String> schemaUrl,
                                                      @RequestParam("size") Optional<Integer> queueSize,
                                                      @RequestParam("deserializerId") String deserializerId,
+                                                     @RequestParam("keyFilter") Optional<String> keyFilter,
                                                      @RequestParam("messageFilter") Optional<String> messageFilter) {
         DeserializerInfoModel des = deserializerRegistryService.findById(deserializerId);
         if (des == null) {
@@ -108,11 +109,18 @@ public class KafkaConsumerResource {
                     })
                     .map(n -> (JsonNode) n)
                     .filter(n ->  {
-                        return messageFilter.map( f -> {
+
+                        return keyFilter.map( f -> {
+                            final Pattern pattern = Pattern.compile(f);
+                            final Matcher matcher = pattern.matcher(n.get("key").asText());
+                            return matcher.find();
+                        }).orElse(true) &&
+                        messageFilter.map( f -> {
                             final Pattern pattern = Pattern.compile(f);
                             final Matcher matcher = pattern.matcher(n.get("message").asText());
                             return matcher.find();
                         }).orElse(true);
+
                     })
                     .collect(Collectors.toList());
             page = new Page<>();

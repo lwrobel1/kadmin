@@ -12,6 +12,7 @@ function initMain() {
             kafkaUrl: null,
             schemaUrl: null,
             topic: null,
+            keyFilter: null,
             messageFilter: null,
             since: null,
             refreshHandle: null,
@@ -95,6 +96,7 @@ function initConfig() {
         kafkaUrl: $('#kafkahost').val(),
         schemaUrl: $('#schemaurl').val(),
         topic: $('#topic').val(),
+        keyFilter: $('#keyfilter').val(),
         messageFilter: $('#messagefilter').val(),
         since: -1,
         autoRefresh: null,
@@ -106,6 +108,9 @@ function initConfig() {
     }
     if (consumerConfig.schemaUrl === "") {
         consumerConfig.schemaUrl = null;
+    }
+    if (consumerConfig.KeyFilter === "") {
+        consumerConfig.KeyFilter = null;
     }
     if (consumerConfig.messageFilter === "") {
         consumerConfig.messageFilter = null;
@@ -120,10 +125,22 @@ function disableForm() {
     $("#kafkahost").prop("disabled", true);
     $("#schemaurl").prop("disabled", true);
     $("#topic").prop("disabled", true);
+    $("#keyfilter").prop("disabled", true);
     $("#messagefilter").prop("disabled", true);
     App.consumer.$topicsSelect.prop("disabled", true);
     $("#start-consumer-btn").addClass("disabled");
     App.consumer.$desSelect.prop("disabled", true);
+}
+
+function enableForm() {
+    $("#kafkahost").prop("disabled", false);
+    $("#schemaurl").prop("disabled", false);
+    $("#topic").prop("disabled", false);
+    $("#keyfilter").prop("disabled", false);
+    $("#messagefilter").prop("disabled", false);
+    App.consumer.$topicsSelect.prop("disabled", false);
+    $("#start-consumer-btn").removeClass("disabled");
+    App.consumer.$desSelect.prop("disabled", false);
 }
 
 function initMessageList() {
@@ -167,7 +184,9 @@ function disposeConsumer() {
         type: "DELETE",
         url: App.contextPath + "/api/manager/consumers/" + App.consumer.consumerConfig.id,
         success: function() {
-            window.location.href = App.contextPath;
+            App.consumer.$messageList.html('');
+            App.consumer.consumerConfig.started = false;
+            enableForm();
         }
     });
 }
@@ -197,6 +216,9 @@ function buildUrl() {
     if (!!consumerConfig.schemaUrl) {
         url += "schemaUrl=" + consumerConfig.schemaUrl + "&";
     }
+    if (!!consumerConfig.keyFilter) {
+        url += "keyFilter=" + consumerConfig.keyFilter;
+    }
     if (!!consumerConfig.messageFilter) {
         url += "messageFilter=" + consumerConfig.messageFilter;
     }
@@ -220,8 +242,7 @@ function handleResults(res) {
         ele.writeTimeText = moment(ele.writeTime).format('LTS');
         ele.messageText = "null";
         if (!!ele.message) {
-            ele.rawMessage = JSON.stringify(ele.message, null, 2).replace(/([^\\])\\n/g, "$1\n");
-            ele.messageText = syntaxHighlight(ele.rawMessage);
+            ele.messageText = ele.message;
         } else {
             ele.rawMessage = "null";
             ele.messageText = "null";
@@ -236,6 +257,7 @@ function handleResults(res) {
         ele.timestamp = "_" + count++;
         html = App.consumer.messageTemplate(ele);
         App.consumer.$messageList.prepend(html);
+        PR.prettyPrint();
     });
     App.consumer.clipboard = new Clipboard('.copy-btn');
 }
@@ -244,24 +266,5 @@ function uniqueId() {
     return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
         return v.toString(16);
-    });
-}
-
-function syntaxHighlight(json) {
-    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        var cls = 'number';
-        if (/^"/.test(match)) {
-            if (/:$/.test(match)) {
-                cls = 'key';
-            } else {
-                cls = 'string';
-            }
-        } else if (/true|false/.test(match)) {
-            cls = 'boolean';
-        } else if (/null/.test(match)) {
-            cls = 'null';
-        }
-        return '<span class="' + cls + '">' + match + '</span>';
     });
 }
