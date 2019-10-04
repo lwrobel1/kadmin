@@ -1,41 +1,19 @@
-buildscript {
-	ext {
-		springBootVersion = spring_boot_version
-	}
-	repositories {
-		mavenCentral()
-		maven { url 'http://packages.confluent.io/maven/' }
-		maven { url "https://plugins.gradle.org/m2/" }
-		jcenter()
-	}
-	dependencies {
-		classpath "io.spring.gradle:dependency-management-plugin:1.0.8.RELEASE"
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}")
-		classpath("org.springframework:springloaded:1.2.8.RELEASE")
-	}
+plugins {
+	id 'org.springframework.boot' version '2.1.9.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+	id 'java'
 }
 
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'java'
-apply plugin: "io.spring.dependency-management"
+group = 'com.bettercloud'
+version = '0.12.0'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
-jar {
-	baseName	= 'shared-kafka-admin-micro'
-	version 	= '0.12.0'
-	enabled 	= true
-	manifest {
-		attributes 'Main-Class': 'com.bettercloud.kadmin.Application'
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
 	}
 }
-
-bootJar {
-	classifier = 'boot'
-}
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 repositories {
 	jcenter()
@@ -44,53 +22,29 @@ repositories {
 	maven { url 'http://packages.confluent.io/maven/' }
 }
 
-
 dependencies {
-
 	//Spring Boot
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: spring_boot_version
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: spring_boot_version
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: spring_boot_version
-
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	//Apache
-	compile group: 'org.apache.commons', name: 'commons-lang3', version: apache_commons_lang_version
-	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: apache_httpclient_version
-
+	implementation "org.apache.commons:commons-lang3:${apache_commons_lang_version}"
+	implementation "org.apache.httpcomponents:httpclient:${apache_httpclient_version}"
 
 	//Utils
-	compile group: 'com.google.guava', name: 'guava', version: guava_version
-	compile group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
-	compile group: 'org.projectlombok', name: 'lombok', version: lombok_version
-
+	implementation "com.google.guava:guava:${guava_version}"
+	implementation "ch.qos.logback:logback-classic:${logback_version}"
+	implementation "log4j:log4j:${log4j_version}"
 
 	//confluent
-	compile group: 'org.apache.avro', name: 'avro', version: avro_version
-	compile group: 'org.apache.kafka', name: 'kafka-clients', version: kafka_version
-	compile group: 'io.confluent', name: 'kafka-avro-serializer', version: confluent_version
+	implementation "org.apache.avro:avro:${avro_version}"
+	implementation "org.apache.kafka:kafka-clients:${kafka_version}"
+	implementation "io.confluent:kafka-avro-serializer:${confluent_version}"
 
-	compile group: 'log4j', name: 'log4j', version: log4j_version
+	//Lombok
+	implementation 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-}
-
-dependencyManagement {
-	dependencies {
-		dependency 'com.netflix.archaius:archaius-core:0.7.1'
-		dependency ('org.springframework.integration:spring-integration-kafka:${spring_integration_version}') {
-			exclude 'org.apache.kafka:kafka_2.10'
-		}
-	}
-}
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '2.11'
-}
-
-configurations {
-	integTestCompile.extendsFrom testCompile
-	integTestRuntime.extendsFrom testRuntime
-	unitTestCompile.extendsFrom testCompile
-	unitTestRuntime.extendsFrom testRuntime
-	all*.exclude module : 'slf4j-log4j12'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

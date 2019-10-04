@@ -6,7 +6,7 @@ RUN ./gradlew clean build -x test
 FROM openjdk:8-jre
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/app-boot.jar /app/app.jar
+COPY --from=builder /app/build/libs/kadmin-*.jar /app/app.jar
 COPY application.properties /app/application.properties
 
 EXPOSE 8080
