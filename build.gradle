@@ -30,6 +30,10 @@ jar {
 	}
 }
 
+bootJar {
+	classifier = 'boot'
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -50,8 +54,8 @@ dependencies {
 
 
 	//Apache
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: apache_commons_lang_version
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: apache_httpclient_version
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: apache_commons_lang_version
+	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: apache_httpclient_version
 
 
 	//Utils
@@ -80,13 +84,13 @@ dependencyManagement {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.11'
+	gradleVersion = '2.11'
 }
 
 configurations {
-    integTestCompile.extendsFrom testCompile
-    integTestRuntime.extendsFrom testRuntime
-    unitTestCompile.extendsFrom testCompile
-    unitTestRuntime.extendsFrom testRuntime
-    all*.exclude module : 'slf4j-log4j12'
+	integTestCompile.extendsFrom testCompile
+	integTestRuntime.extendsFrom testRuntime
+	unitTestCompile.extendsFrom testCompile
+	unitTestRuntime.extendsFrom testRuntime
+	all*.exclude module : 'slf4j-log4j12'
 }
