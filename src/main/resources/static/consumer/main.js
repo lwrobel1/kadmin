@@ -242,8 +242,7 @@ function handleResults(res) {
         ele.writeTimeText = moment(ele.writeTime).format('LTS');
         ele.messageText = "null";
         if (!!ele.message) {
-            ele.rawMessage = JSON.stringify(ele.message, null, 2).replace(/([^\\])\\n/g, "$1\n");
-            ele.messageText = syntaxHighlight(ele.rawMessage);
+            ele.messageText = ele.message;
         } else {
             ele.rawMessage = "null";
             ele.messageText = "null";
@@ -251,6 +250,7 @@ function handleResults(res) {
         ele.timestamp = "_" + count++;
         html = App.consumer.messageTemplate(ele);
         App.consumer.$messageList.prepend(html);
+        PR.prettyPrint();
     });
     App.consumer.clipboard = new Clipboard('.copy-btn');
 }
@@ -259,24 +259,5 @@ function uniqueId() {
     return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
         return v.toString(16);
-    });
-}
-
-function syntaxHighlight(json) {
-    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        var cls = 'number';
-        if (/^"/.test(match)) {
-            if (/:$/.test(match)) {
-                cls = 'key';
-            } else {
-                cls = 'string';
-            }
-        } else if (/true|false/.test(match)) {
-            cls = 'boolean';
-        } else if (/null/.test(match)) {
-            cls = 'null';
-        }
-        return '<span class="' + cls + '">' + match + '</span>';
     });
 }
